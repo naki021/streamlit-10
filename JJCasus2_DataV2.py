@@ -2,10 +2,12 @@
 # coding: utf-8
 
 # In[27]:
+# coding: utf-8
+
 import streamlit as st
 import requests
 import pandas as pd
-import matplotlib as plt 
+import matplotlib.pyplot as plt  # ✅ Gebruik Matplotlib in plaats van Plotly
 from io import StringIO
 
 # Streamlit titel
