@@ -5,7 +5,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-import matplotlib.pyplot as plt  # ✅ Gebruik Matplotlib in plaats van Plotly
+import matplotlib as plt 
 from io import StringIO
 
 # Streamlit titel
