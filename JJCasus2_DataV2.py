@@ -5,7 +5,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-import plotly.express as px
+import plotly as plt  # Gebruik alleen 'plotly'
 from io import StringIO
 
 # Streamlit titel
@@ -65,35 +65,43 @@ if 'route.destinations' in df.columns:
 
 # 🎨 **Stijlvolle Dataframe Weergave**
 st.subheader("📊 Vluchtgegevens")
-st.dataframe(df.head(10).style.set_properties(**{
-    'background-color': 'lightgray',
-    'color': 'black',
-    'border-color': 'white'
-}))
+st.dataframe(df.head(10))
 
 # 📊 **Grafiek: Aantal vluchten per bestemming**
 if 'route.destinations' in df.columns:
     st.subheader("🌍 Aantal Vluchten per Bestemming")
     df_dest_count = df['route.destinations'].value_counts().reset_index()
     df_dest_count.columns = ['Bestemming', 'Aantal Vluchten']
-    fig_dest = px.bar(df_dest_count, x='Bestemming', y='Aantal Vluchten', 
-                      color='Aantal Vluchten', 
-                      text_auto=True, 
-                      title="Top Bestemmingen",
-                      color_continuous_scale="blues")
+
+    fig_dest = plt.graph_objects.Figure(data=[
+        plt.graph_objects.Bar(x=df_dest_count['Bestemming'], y=df_dest_count['Aantal Vluchten'], 
+               marker=dict(color=df_dest_count['Aantal Vluchten'], colorscale="Blues"),
+               text=df_dest_count['Aantal Vluchten'], textposition='auto')
+    ])
+    fig_dest.update_layout(title="Top Bestemmingen", xaxis_title="Bestemming", yaxis_title="Aantal Vluchten")
+
     st.plotly_chart(fig_dest)
 
 # 📊 **Boxplot: Spreiding van vertragingen in minuten**
 if 'landingDelay' in df.columns:
     st.subheader("⏳ Vertragingen bij Landingen (in Minuten)")
-    fig_delay_box = px.box(df, y='landingDelay', title="Spreiding van Vertragingen (in Minuten)", points="all")
+    fig_delay_box = plt.graph_objects.Figure(data=[
+        plt.graph_objects.Box(y=df['landingDelay'], boxpoints="all", jitter=0.3, pointpos=-1.8)
+    ])
+    fig_delay_box.update_layout(title="Spreiding van Vertragingen (in Minuten)", yaxis_title="Vertraging (minuten)")
+
     st.plotly_chart(fig_delay_box)
 
 # 📊 **Scatter plot: Vertraging per bestemming**
 if 'route.destinations' in df.columns and 'landingDelay' in df.columns:
     st.subheader("🎯 Vertraging vs. Bestemming")
-    fig_scatter = px.scatter(df, x='route.destinations', y='landingDelay', color='landingDelay',
-                              title="Vertragingen per Bestemming (in Minuten)", size_max=10, opacity=0.7)
+    fig_scatter = plt.graph_objects.Figure(data=[
+        plt.graph_objects.Scatter(x=df['route.destinations'], y=df['landingDelay'], 
+                   mode='markers', marker=dict(size=10, color=df['landingDelay'], colorscale="Blues", opacity=0.7))
+    ])
+    fig_scatter.update_layout(title="Vertragingen per Bestemming (in Minuten)", 
+                              xaxis_title="Bestemming", yaxis_title="Vertraging (minuten)")
+
     st.plotly_chart(fig_scatter)
 
 # 📊 **Pie-chart: Aantal vluchten per pier**
@@ -101,7 +109,10 @@ if 'pier' in df.columns:
     st.subheader("🏗 Aantal Vluchten per Pier")
     df_pier_count = df['pier'].value_counts().reset_index()
     df_pier_count.columns = ['Pier', 'Aantal Vluchten']
-    fig_pier = px.pie(df_pier_count, names='Pier', values='Aantal Vluchten', 
-                      title="Verdeling Vluchten per Pier", color_discrete_sequence=px.colors.qualitative.Set3)
-    st.plotly_chart(fig_pier)
 
+    fig_pier = plt.graph_objects.Figure(data=[
+        plt.graph_objects.Pie(labels=df_pier_count['Pier'], values=df_pier_count['Aantal Vluchten'])
+    ])
+    fig_pier.update_layout(title="Verdeling Vluchten per Pier")
+
+    st.plotly_chart(fig_pier)
