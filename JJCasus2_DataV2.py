@@ -5,7 +5,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-import plotly as plt  # Gebruik alleen 'plotly'
+import plotly as plt 
 from io import StringIO
 
 # Streamlit titel
